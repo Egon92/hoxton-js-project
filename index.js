@@ -457,7 +457,7 @@ function renderfunction3x3() {
 
     let winningFunc = () => {
         for (let a = 0; a <= 7; a++) {
-            let b = state.winningCombinations3x3[a];
+            let b = state.winningCombinations[a];
             // console.log(b);
 
             if (boxes[b[0]].id == "" || boxes[b[1]].id == "" || boxes[b[2]].id == "") {

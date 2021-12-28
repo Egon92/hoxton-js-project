@@ -274,7 +274,7 @@ function renderTiTac4x4() {
 
 
     const gameBoard = document.createElement('div')
-    gameBoard.setAttribute('id', 'gameBoard')
+    gameBoard.setAttribute('id', 'gameBoard4x4')
 
     const divBoxes1 = document.createElement('div')
     divBoxes1.setAttribute('class', 'boxes')

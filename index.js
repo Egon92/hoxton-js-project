@@ -171,6 +171,7 @@ function renderTiTac3x3() {
         document.body.innerHTML = ''
         state.winningCombinations = winningCombinations4x4
         renderTiTac4x4()
+
     })
 
     switchDiv.append(switchButton)
@@ -337,7 +338,10 @@ function renderTiTac4x4() {
         document.body.innerHTML = ''
         state.winningCombinations = winningCombinations3x3
         renderTiTac3x3()
+
     })
+
+    debugger
 
     switchDiv.append(switchButton)
 
@@ -591,7 +595,6 @@ function renderfunction4x4() {
     }
 }
 renderfunction3x3()
-
 
 
 

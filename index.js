@@ -341,8 +341,6 @@ function renderTiTac4x4() {
 
     })
 
-    debugger
-
     switchDiv.append(switchButton)
 
     mainPage.append(headerButton, gameBoard, switchDiv)
@@ -374,17 +372,19 @@ function renderTiTac4x4() {
 
     document.body.append(containerEl)
 
+    renderfunction4x4()
+
 }
 
 function render() {
     document.body.innerHTML = ''
     renderTiTac3x3()
 
-    const switchButton = document.querySelector('#switchButton')
-    if (switchButton.clicked === true) {
-        document.body.innerHTML = ''
-        renderfunction4x4()
-    }
+    // const switchButton = document.querySelector('#switchButton')
+    // if (switchButton.clicked === true) {
+    //     document.body.innerHTML = ''
+    //     renderfunction4x4()
+    // }
 }
 render()
 
@@ -414,6 +414,7 @@ function renderfunction3x3() {
 
     choose.forEach(chooseNow => {
         chooseNow.addEventListener("click", () => {
+            state.winningCombinations = winningCombinations3x3
             if (chooseNow.id === "playerX") {
                 state.changeTurn = false;
                 // console.log(state.changeTurn);
@@ -503,8 +504,23 @@ function renderfunction3x3() {
 }
 
 function renderfunction4x4() {
+
+    let startingPage = document.querySelector("#startingPage");
+    let choose = document.querySelectorAll(".choose");
+
+    // Selecting All "Main Page" Tags
+    let mainPage = document.querySelector("#mainPage");
+    let showChange = document.querySelector("#showChange");
+    let boxes = document.querySelectorAll(".boxes");
+
+    // Selecting All "Winner Page" Tags
+    let winner = document.querySelector("#winner");
+    let winnerName = document.querySelector("#winnerName");
+    let quit = document.querySelector("#quit");
+
     choose.forEach(chooseNow => {
         chooseNow.addEventListener("click", () => {
+            state.winningCombinations = winningCombinations4x4
             if (chooseNow.id === "playerX") {
                 state.changeTurn = false;
                 // console.log(state.changeTurn);
@@ -548,7 +564,7 @@ function renderfunction4x4() {
 
     let winningFunc = () => {
         for (let a = 0; a <= 9; a++) {
-            let b = state.winningCombinations4x4[a];
+            let b = state.winningCombinations[a];
             // console.log(b);
 
             if (boxes[b[0]].id == "" || boxes[b[1]].id == "" || boxes[b[2]].id == "" || boxes[b[3]].id == "") {

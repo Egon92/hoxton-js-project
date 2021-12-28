@@ -2,8 +2,54 @@
 // False => X's Turn
 // True => O's Turn
 
-// All Possible Winning Combinations
+const board3x3 = ['', '', '', '', '', '', '', '', '']
+const board4x4 = [
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  ''
+]
+
 const winningCombinations3x3 = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6]
+]
+
+const winningCombinations4x4 = [
+  [0, 1, 2, 3],
+  [4, 5, 6, 7],
+  [8, 9, 10, 11],
+  [12, 13, 14, 15],
+  [0, 4, 10, 12],
+  [1, 5, 9, 13],
+  [2, 6, 10, 14],
+  [3, 7, 11, 15],
+  [0, 5, 10, 15],
+  [3, 6, 9, 12]
+]
+
+// All Possible Winning Combinations
+const state = {
+  board: ['', '', '', '', '', '', '', '', ''],
+  winningCombinations: [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
@@ -12,623 +58,197 @@ const winningCombinations3x3 = [
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6]
-]
-
-const winningCombinations4x4 = [
-    [0, 1, 2, 3],
-    [4, 5, 6, 7],
-    [8, 9, 10, 11],
-    [12, 13, 14, 15],
-    [0, 4, 8, 12],
-    [1, 5, 9, 13],
-    [2, 6, 10, 14],
-    [3, 7, 11, 15],
-    [0, 5, 10, 15],
-    [3, 6, 9, 12]
-]
-const state = {
-    changeTurn: null,
-    winningCombinations: []
+  ],
+  turn: null,
+  boardSize: 3
 }
 
-/* <div id="container">
-    <!-- Starting Page -->
-    <div id="startingPage">
-        <h2>Tic Tac Toe</h2>
-        <div id="line"></div>
-        <h4>Select Which You Want To Be?</h4>
-        <div id="button">
-            <button id="playerX" class="choose">Player ( X )</button>
-            <button id="playerO" class="choose">Player ( O )</button>
-        </div>
-    </div> */
+function checkIfDraw () {
+  return state.board.every(tile => tile !== '')
+}
 
+function checkIfWinner () {
+  return state.winningCombinations.some(combinations =>
+    combinations.every(index => state.board[index] === state.turn)
+  )
+}
 
-function renderTiTac3x3() {
+function getStatus () {
+  if (state.turn === null) return 'choosingPlayer'
+  if (checkIfDraw()) return 'draw'
+  if (checkIfWinner()) return 'finished'
+  return 'playing'
+}
 
-    const containerEl = document.createElement('div')
-    containerEl.setAttribute('id', 'container')
+function renderStartingPage (containerEl) {
+  const startingPage = document.createElement('div')
+  startingPage.setAttribute('id', 'startingPage')
 
-    // Starting Page
+  const titlegame = document.createElement('h2')
+  titlegame.textContent = 'Tic Tac Toe'
 
-    const startingPage = document.createElement('div')
-    startingPage.setAttribute('id', 'startingPage')
+  const divLine = document.createElement('div')
+  divLine.setAttribute('id', 'line')
 
-    const titlegame = document.createElement('h2')
-    titlegame.textContent = 'Tic Tac Toe'
+  const selectTitle = document.createElement('h4')
+  selectTitle.textContent = 'Select Which You Want To Be?'
 
-    const divLine = document.createElement('div')
-    divLine.setAttribute('id', 'line')
+  const buttonDiv = document.createElement('div')
+  buttonDiv.setAttribute('id', 'button')
 
-    const selectTitle = document.createElement('h4')
-    selectTitle.textContent = 'Select Which You Want To Be?'
+  const buttonPlayerx = document.createElement('button')
+  buttonPlayerx.setAttribute('id', 'playerX')
+  buttonPlayerx.setAttribute('class', 'choose')
+  buttonPlayerx.textContent = 'Player ( X )'
+  buttonPlayerx.addEventListener('click', function () {
+    state.turn = 'X'
+    render()
+  })
 
-    const buttonDiv = document.createElement('div')
-    buttonDiv.setAttribute('id', 'button')
+  const buttonPlayero = document.createElement('button')
+  buttonPlayero.setAttribute('id', 'playerO')
+  buttonPlayero.setAttribute('class', 'choose')
+  buttonPlayero.textContent = 'Player ( O )'
+  buttonPlayero.addEventListener('click', function () {
+    state.turn = 'O'
+    render()
+  })
 
-    const buttonPlayerx = document.createElement('button')
-    buttonPlayerx.setAttribute('id', 'playerX')
-    buttonPlayerx.setAttribute('class', 'choose')
-    buttonPlayerx.textContent = 'Player ( X )'
+  buttonDiv.append(buttonPlayerx, buttonPlayero)
 
-    const buttonPlayero = document.createElement('button')
-    buttonPlayero.setAttribute('id', 'playerO')
-    buttonPlayero.setAttribute('class', 'choose')
-    buttonPlayero.textContent = 'Player ( O )'
+  const sizePickSection = document.createElement('div')
 
-    buttonDiv.append(buttonPlayerx, buttonPlayero)
+  const pickBoardSizeH2 = document.createElement('h4')
+  pickBoardSizeH2.textContent = 'Pick a board size'
+  sizePickSection.append(pickBoardSizeH2)
 
-    startingPage.append(titlegame, divLine, selectTitle, buttonDiv)
+  for (const size of [3, 4]) {
+    const labelEl = document.createElement('label')
+    labelEl.setAttribute('class', 'size-radio-label')
+    labelEl.textContent = size
 
-
-
-    // <!-- Main Page -->
-    // <div id="mainPage">
-    //     <div id="headerBtns">
-    //         <button id="">X Turn</button>
-    //         <button id="O_Turn">O Turn</button>
-    //         <div id="showChange"></div>
-    //     </div>
-    //     <div id="gameBoard">
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //         <div class="boxes"></div>
-    //     </div>
-    //     <div id="switchDiv">
-    //          <button id="switchButton">
-    //              Switch to 4x4 game
-    //          </button>
-    //      </div>
-    // </div>
-
-    // Main Page
-
-    const mainPage = document.createElement('div')
-    mainPage.setAttribute('id', 'mainPage')
-
-    const headerButton = document.createElement('div')
-    headerButton.setAttribute('id', 'headerBtns')
-
-    const buttonX = document.createElement('button')
-    buttonX.setAttribute('id', '')
-    buttonX.textContent = 'X Turn'
-
-    const buttonO = document.createElement('button')
-    buttonO.setAttribute('id', 'O_Turn')
-    buttonO.textContent = 'O Turn'
-
-    const showChange = document.createElement('div')
-    showChange.setAttribute('id', 'showChange')
-
-    headerButton.append(buttonX, buttonO, showChange)
-
-    const gameBoard = document.createElement('div')
-    gameBoard.setAttribute('id', 'gameBoard')
-
-    const divBoxes1 = document.createElement('div')
-    divBoxes1.setAttribute('class', 'boxes')
-
-    const divBoxes2 = document.createElement('div')
-    divBoxes2.setAttribute('class', 'boxes')
-
-    const divBoxes3 = document.createElement('div')
-    divBoxes3.setAttribute('class', 'boxes')
-
-    const divBoxes4 = document.createElement('div')
-    divBoxes4.setAttribute('class', 'boxes')
-
-    const divBoxes5 = document.createElement('div')
-    divBoxes5.setAttribute('class', 'boxes')
-
-    const divBoxes6 = document.createElement('div')
-    divBoxes6.setAttribute('class', 'boxes')
-
-    const divBoxes7 = document.createElement('div')
-    divBoxes7.setAttribute('class', 'boxes')
-
-    const divBoxes8 = document.createElement('div')
-    divBoxes8.setAttribute('class', 'boxes')
-
-    const divBoxes9 = document.createElement('div')
-    divBoxes9.setAttribute('class', 'boxes')
-
-    gameBoard.append(divBoxes1, divBoxes2, divBoxes3, divBoxes4, divBoxes5, divBoxes6, divBoxes7, divBoxes8, divBoxes9)
-
-    const switchDiv = document.createElement('div')
-    switchDiv.setAttribute('id', 'switchDiv')
-
-    const switchButton = document.createElement('button')
-    switchButton.setAttribute('id', 'switchButton')
-    switchButton.textContent = 'Switch into 4x4 game'
-
-    switchButton.addEventListener('click', function () {
-        document.body.innerHTML = ''
-        state.winningCombinations = winningCombinations4x4
-        renderTiTac4x4()
-        renderfunction4x4()
+    const radioEl = document.createElement('input')
+    radioEl.setAttribute('type', 'radio')
+    radioEl.setAttribute('name', 'size')
+    radioEl.value = size
+    if (size === state.boardSize) radioEl.checked = true
+    radioEl.addEventListener('click', function () {
+      state.boardSize = size
+      if (state.boardSize === 3) {
+        state.board = board3x3.slice()
+        state.winningCombinations = winningCombinations3x3.slice()
+      }
+      if (state.boardSize === 4) {
+        state.board = board4x4.slice()
+        state.winningCombinations = winningCombinations4x4.slice()
+      }
+      render()
     })
 
-    switchDiv.append(switchButton)
+    labelEl.append(radioEl)
+    sizePickSection.append(labelEl)
+  }
 
-    mainPage.append(headerButton, gameBoard, switchDiv)
-
-
-    // <!-- WInner Page -->
-    // <div id="winner">
-    //     <h2 id="winnerName">Player X Win The Game!</h2>
-    //     <div id="button">
-    //         <button id="quit">Play Again</button>
-    //     </div>
-    // </div>
-
-    // WInner Page
-
-    const divWiner = document.createElement('div')
-    divWiner.setAttribute('id', 'winner')
-
-    const winerName = document.createElement('h2')
-    winerName.setAttribute('id', 'winnerName')
-    winerName.textContent = 'Player X Win The Game!'
-
-    const btnPlay = document.createElement('div')
-    btnPlay.setAttribute('id', 'button')
-
-    const btnQuit = document.createElement('button')
-    btnQuit.setAttribute('id', 'quit')
-    btnQuit.textContent = 'Play Again'
-
-    btnPlay.append(btnQuit)
-
-    divWiner.append(winerName, btnPlay)
-
-
-    containerEl.append(startingPage, mainPage, divWiner)
-
-    document.body.append(containerEl)
-
+  startingPage.append(
+    titlegame,
+    divLine,
+    selectTitle,
+    buttonDiv,
+    sizePickSection
+  )
+  containerEl.append(startingPage)
 }
 
-function renderTiTac4x4() {
+function renderMainPage (containerEl) {
+  const mainPage = document.createElement('div')
+  mainPage.setAttribute('id', 'mainPage')
 
-    const containerEl = document.createElement('div')
-    containerEl.setAttribute('id', 'container')
+  const headerButton = document.createElement('div')
+  headerButton.setAttribute('id', 'headerBtns')
 
-    // Starting Page
+  const buttonX = document.createElement('button')
+  buttonX.setAttribute('id', '')
+  buttonX.textContent = 'X Turn'
 
-    const startingPage = document.createElement('div')
-    startingPage.setAttribute('id', 'startingPage')
+  const buttonO = document.createElement('button')
+  buttonO.setAttribute('id', 'O_Turn')
+  buttonO.textContent = 'O Turn'
 
-    const titlegame = document.createElement('h2')
-    titlegame.textContent = 'Tic Tac Toe'
+  const showChange = document.createElement('div')
+  showChange.setAttribute('id', 'showChange')
+  showChange.setAttribute('class', state.turn)
 
-    const divLine = document.createElement('div')
-    divLine.setAttribute('id', 'line')
+  headerButton.append(buttonX, buttonO, showChange)
 
-    const selectTitle = document.createElement('h4')
-    selectTitle.textContent = 'Select Which You Want To Be?'
+  const gameBoard = document.createElement('div')
+  gameBoard.setAttribute('id', 'gameBoard')
+  gameBoard.setAttribute(
+    'style',
+    `grid-template-columns: repeat(${state.boardSize}, auto);`
+  )
 
-    const buttonDiv = document.createElement('div')
-    buttonDiv.setAttribute('id', 'button')
+  for (const index in state.board) {
+    const tile = state.board[index]
+    const tileEl = document.createElement('div')
+    tileEl.setAttribute('class', 'boxes')
 
-    const buttonPlayerx = document.createElement('button')
-    buttonPlayerx.setAttribute('id', 'playerX')
-    buttonPlayerx.setAttribute('class', 'choose')
-    buttonPlayerx.textContent = 'Player ( X )'
+    if (tile === 'X') tileEl.innerHTML = `<i class="fas fa-times"></i>`
+    if (tile === 'O') tileEl.innerHTML = `<i class="fas fa-circle-notch"></i>`
+    if (tile === '') {
+      tileEl.addEventListener('click', function () {
+        state.board[index] = state.turn
+        if (!checkIfWinner()) state.turn = state.turn === 'X' ? 'O' : 'X'
+        render()
+      })
+    }
 
-    const buttonPlayero = document.createElement('button')
-    buttonPlayero.setAttribute('id', 'playerO')
-    buttonPlayero.setAttribute('class', 'choose')
-    buttonPlayero.textContent = 'Player ( O )'
+    gameBoard.append(tileEl)
+  }
 
-    buttonDiv.append(buttonPlayerx, buttonPlayero)
-
-    startingPage.append(titlegame, divLine, selectTitle, buttonDiv)
-
-
-    // Main Page
-
-    const mainPage = document.createElement('div')
-    mainPage.setAttribute('id', 'mainPage')
-
-    const headerButton = document.createElement('div')
-    headerButton.setAttribute('id', 'headerBtns')
-
-    const buttonX = document.createElement('button')
-    buttonX.setAttribute('id', '')
-    buttonX.textContent = 'X Turn'
-
-    const buttonO = document.createElement('button')
-    buttonO.setAttribute('id', 'O_Turn')
-    buttonO.textContent = 'O Turn'
-
-    const showChange = document.createElement('div')
-    showChange.setAttribute('id', 'showChange')
-
-    headerButton.append(buttonX, buttonO, showChange)
-
-
-
-    const gameBoard = document.createElement('div')
-    gameBoard.setAttribute('id', 'gameBoard4x4')
-
-    const divBoxes1 = document.createElement('div')
-    divBoxes1.setAttribute('class', 'boxes')
-
-    const divBoxes2 = document.createElement('div')
-    divBoxes2.setAttribute('class', 'boxes')
-
-    const divBoxes3 = document.createElement('div')
-    divBoxes3.setAttribute('class', 'boxes')
-
-    const divBoxes4 = document.createElement('div')
-    divBoxes4.setAttribute('class', 'boxes')
-
-    const divBoxes5 = document.createElement('div')
-    divBoxes5.setAttribute('class', 'boxes')
-
-    const divBoxes6 = document.createElement('div')
-    divBoxes6.setAttribute('class', 'boxes')
-
-    const divBoxes7 = document.createElement('div')
-    divBoxes7.setAttribute('class', 'boxes')
-
-    const divBoxes8 = document.createElement('div')
-    divBoxes8.setAttribute('class', 'boxes')
-
-    const divBoxes9 = document.createElement('div')
-    divBoxes9.setAttribute('class', 'boxes')
-
-    const divBoxes10 = document.createElement('div')
-    divBoxes10.setAttribute('class', 'boxes')
-
-    const divBoxes11 = document.createElement('div')
-    divBoxes11.setAttribute('class', 'boxes')
-
-    const divBoxes12 = document.createElement('div')
-    divBoxes12.setAttribute('class', 'boxes')
-
-    const divBoxes13 = document.createElement('div')
-    divBoxes13.setAttribute('class', 'boxes')
-
-    const divBoxes14 = document.createElement('div')
-    divBoxes14.setAttribute('class', 'boxes')
-
-    const divBoxes15 = document.createElement('div')
-    divBoxes15.setAttribute('class', 'boxes')
-
-    const divBoxes16 = document.createElement('div')
-    divBoxes16.setAttribute('class', 'boxes')
-
-    gameBoard.append(divBoxes1, divBoxes2, divBoxes3, divBoxes4, divBoxes5, divBoxes6, divBoxes7, divBoxes8, divBoxes9, divBoxes10, divBoxes11, divBoxes12, divBoxes13, divBoxes14, divBoxes15, divBoxes16)
-
-    const switchDiv = document.createElement('div')
-    switchDiv.setAttribute('id', 'switchDiv')
-
-    const switchButton = document.createElement('button')
-    switchButton.setAttribute('id', 'switchButton')
-    switchButton.textContent = 'Switch back to 3x3 game'
-
-    switchButton.addEventListener('click', function () {
-        document.body.innerHTML = ''
-        state.winningCombinations = winningCombinations3x3
-        renderTiTac3x3()
-        renderfunction3x3()
-    })
-
-    switchDiv.append(switchButton)
-
-    mainPage.append(headerButton, gameBoard, switchDiv)
-
-    mainPage.append(headerButton, gameBoard)
-
-    // WInner Page
-
-    const divWiner = document.createElement('div')
-    divWiner.setAttribute('id', 'winner')
-
-    const winerName = document.createElement('h2')
-    winerName.setAttribute('id', 'winnerName')
-    winerName.textContent = 'Player X Win The Game!'
-
-    const btnPlay = document.createElement('div')
-    btnPlay.setAttribute('id', 'button')
-
-    const btnQuit = document.createElement('button')
-    btnQuit.setAttribute('id', 'quit')
-    btnQuit.textContent = 'Play Again'
-
-    btnPlay.append(btnQuit)
-
-    divWiner.append(winerName, btnPlay)
-
-
-    containerEl.append(startingPage, mainPage, divWiner)
-
-    document.body.append(containerEl)
+  mainPage.append(headerButton, gameBoard)
+  containerEl.append(mainPage)
 }
 
-function render() {
-    document.body.innerHTML = ''
-    renderTiTac3x3()
+function renderWinnerPage (containerEl) {
+  const divWiner = document.createElement('div')
+  divWiner.setAttribute('id', 'winner')
+
+  const winerName = document.createElement('h2')
+  winerName.setAttribute('id', 'winnerName')
+  winerName.textContent = `Player ${state.turn} Wins The Game!`
+
+  const btnPlay = document.createElement('div')
+  btnPlay.setAttribute('id', 'button')
+
+  const playAgainBtn = document.createElement('button')
+  playAgainBtn.setAttribute('id', 'quit')
+  playAgainBtn.textContent = 'Play Again'
+  playAgainBtn.addEventListener('click', function () {
+    state.board = ['', '', '', '', '', '', '', '', '']
+    state.turn = null
+    render()
+  })
+
+  btnPlay.append(playAgainBtn)
+
+  divWiner.append(winerName, btnPlay)
+  containerEl.append(divWiner)
 }
+
+function renderTicTac () {
+  const containerEl = document.createElement('div')
+  containerEl.setAttribute('id', 'container')
+
+  if (getStatus() === 'choosingPlayer') renderStartingPage(containerEl)
+  if (getStatus() === 'playing') renderMainPage(containerEl)
+  if (getStatus() === 'finished') renderWinnerPage(containerEl)
+
+  document.body.append(containerEl)
+}
+
+function render () {
+  document.body.innerHTML = ''
+  renderTicTac()
+}
+
 render()
-
-//X => <i class="fas fa-times"></i>
-//O => <i class="fas fa-circle-notch"></i>
-
-// Selecting All "Starting Page" Tags
-// let startingPage = document.querySelector("#startingPage");
-// let choose = document.querySelectorAll(".choose");
-
-// // Selecting All "Main Page" Tags
-// let mainPage = document.querySelector("#mainPage");
-// let showChange = document.querySelector("#showChange");
-// let boxes = document.querySelectorAll(".boxes");
-
-// // Selecting All "Winner Page" Tags
-// let winner = document.querySelector("#winner");
-// let winnerName = document.querySelector("#winnerName");
-// let quit = document.querySelector("#quit");
-
-
-
-// Select Which You Want To Be>
-// X or O
-
-function renderfunction3x3() {
-
-    // Selecting All "Starting Page" Tags
-    let startingPage = document.querySelector("#startingPage");
-    let choose = document.querySelectorAll(".choose");
-
-    // Selecting All "Main Page" Tags
-    let mainPage = document.querySelector("#mainPage");
-    let showChange = document.querySelector("#showChange");
-    let boxes = document.querySelectorAll(".boxes");
-
-    // Selecting All "Winner Page" Tags
-    let winner = document.querySelector("#winner");
-    let winnerName = document.querySelector("#winnerName");
-    let quit = document.querySelector("#quit");
-
-
-    choose.forEach(chooseNow => {
-        chooseNow.addEventListener("click", () => {
-            state.winningCombinations = winningCombinations3x3
-            if (chooseNow.id === "playerX") {
-                state.changeTurn = false;
-                // console.log(state.changeTurn);
-                showChange.style.left = `0px`;
-            } else {
-                state.changeTurn = true;
-                // console.log(state.changeTurn);
-                showChange.style.left = `160px`;
-            }
-            startingPage.style.display = "none";
-            mainPage.style.display = "block";
-        })
-    });
-
-    boxes.forEach(items => {
-        items.addEventListener("click", () => {
-            // Add "X" Icon If "state.changeTurn" = False
-            // Add "O" Icon If "state.changeTurn" = True
-            if (state.changeTurn == false) {
-                items.innerHTML = `<i class="fas fa-times"></i>`;
-                items.id = "X";
-                items.style.pointerEvents = "none";
-                showChange.style.left = `160px`;
-
-                // change The "state.changeTurn" Value False Into True
-                state.changeTurn = true;
-            } else {
-                items.innerHTML = `<i class="fas fa-circle-notch"></i>`;
-                items.id = "O";
-                items.style.pointerEvents = "none";
-                showChange.style.left = `0px`;
-
-                // change The "state.changeTurn" Value False Into True
-                state.changeTurn = false;
-            }
-            winningFunc();
-            drawFunc();
-        })
-    })
-
-
-    let winningFunc = () => {
-        for (let a = 0; a <= 7; a++) {
-            let b = state.winningCombinations[a];
-            // console.log(b);
-
-            if (boxes[b[0]].id == "" || boxes[b[1]].id == "" || boxes[b[2]].id == "") {
-                continue;
-            } else if (boxes[b[0]].id == "X" && boxes[b[1]].id == "X" && boxes[b[2]].id == "X") {
-                // console.log("X is The Winner");
-
-                // Adding Winner text
-                winnerName.innerText = `Player X Win The Game!`;
-
-                // show "Winner Page" & Hide "Mai Page"
-                mainPage.style.display = "none";
-                winner.style.display = "block";
-            } else if (boxes[b[0]].id == "O" && boxes[b[1]].id == "O" && boxes[b[2]].id == "O") {
-                // console.log("O is The Winner");
-
-                // Adding Winner text
-                winnerName.innerText = `Player O Win The Game!`;
-
-                // show "Winner Page" & Hide "Mai Page"
-                mainPage.style.display = "none";
-                winner.style.display = "block";
-            } else {
-                continue;
-            }
-        }
-    }
-
-    // Match Draw Function
-    let drawFunc = () => {
-        if (boxes[0].id != "" && boxes[1].id != "" &&
-            boxes[2].id != "" && boxes[3].id != "" &&
-            boxes[4].id != "" && boxes[5].id != "" &&
-            boxes[6].id != "" && boxes[7].id != "" && boxes[8].id != "") {
-            // Adding "Draw" text
-            winnerName.innerText = `Match Draw!`;
-
-            // show "Winner Page" & Hide "Mai Page"
-            mainPage.style.display = "none";
-            winner.style.display = "block";
-        }
-    }
-    quit.addEventListener("click", () => {
-        window.location.reload();
-    })
-}
-
-function renderfunction4x4() {
-
-    let startingPage = document.querySelector("#startingPage");
-    let choose = document.querySelectorAll(".choose");
-
-    // Selecting All "Main Page" Tags
-    let mainPage = document.querySelector("#mainPage");
-    let showChange = document.querySelector("#showChange");
-    let boxes = document.querySelectorAll(".boxes");
-
-    // Selecting All "Winner Page" Tags
-    let winner = document.querySelector("#winner");
-    let winnerName = document.querySelector("#winnerName");
-    let quit = document.querySelector("#quit");
-
-    choose.forEach(chooseNow => {
-        chooseNow.addEventListener("click", () => {
-            state.winningCombinations = winningCombinations4x4
-            if (chooseNow.id === "playerX") {
-                state.changeTurn = false;
-                // console.log(state.changeTurn);
-                showChange.style.left = `0px`;
-            } else {
-                state.changeTurn = true;
-                // console.log(state.changeTurn);
-                showChange.style.left = `210px`;
-            }
-            startingPage.style.display = "none";
-            mainPage.style.display = "block";
-        })
-    });
-
-    boxes.forEach(items => {
-        items.addEventListener("click", () => {
-            // Add "X" Icon If "state.changeTurn" = False
-            // Add "O" Icon If "state.changeTurn" = True
-            if (state.changeTurn == false) {
-                items.innerHTML = `<i class="fas fa-times"></i>`;
-                items.id = "X";
-                items.style.pointerEvents = "none";
-                showChange.style.left = `210px`;
-
-                // change The "state.changeTurn" Value False Into True
-                state.changeTurn = true;
-            } else {
-                items.innerHTML = `<i class="fas fa-circle-notch"></i>`;
-                items.id = "O";
-                items.style.pointerEvents = "none";
-                showChange.style.left = `0px`;
-
-                // change The "state.changeTurn" Value False Into True
-                state.changeTurn = false;
-            }
-            winningFunc();
-            drawFunc();
-        })
-    })
-
-
-    let winningFunc = () => {
-        for (let a = 0; a <= 9; a++) {
-            let b = state.winningCombinations[a];
-            // console.log(b);
-
-            if (boxes[b[0]].id == "" || boxes[b[1]].id == "" || boxes[b[2]].id == "" || boxes[b[3]].id == "") {
-                continue;
-            } else if (boxes[b[0]].id == "X" && boxes[b[1]].id == "X" && boxes[b[2]].id == "X" && boxes[b[3]].id == "X") {
-                // console.log("X is The Winner");
-
-                // Adding Winner text
-                winnerName.innerText = `Player X Win The Game!`;
-
-                // show "Winner Page" & Hide "Mai Page"
-                mainPage.style.display = "none";
-                winner.style.display = "block";
-            } else if (boxes[b[0]].id == "O" && boxes[b[1]].id == "O" && boxes[b[2]].id == "O" && boxes[b[3]].id == "O") {
-                // console.log("O is The Winner");
-
-                // Adding Winner text
-                winnerName.innerText = `Player O Win The Game!`;
-
-                // show "Winner Page" & Hide "Mai Page"
-                mainPage.style.display = "none";
-                winner.style.display = "block";
-            } else {
-                continue;
-            }
-        }
-    }
-
-    // Match Draw Function
-    let drawFunc = () => {
-        if (boxes[0].id != "" && boxes[1].id != "" &&
-            boxes[2].id != "" && boxes[3].id != "" &&
-            boxes[4].id != "" && boxes[5].id != "" &&
-            boxes[6].id != "" && boxes[7].id != "" && boxes[8].id != "" &&
-            boxes[9].id != "" && boxes[10].id != "" && boxes[11].id != "" &&
-            boxes[12].id != "" && boxes[13].id != "" && boxes[14].id != "" && boxes[15].id != "") {
-            // Adding "Draw" text
-            winnerName.innerText = `Match Draw!`;
-
-            // show "Winner Page" & Hide "Mai Page"
-            mainPage.style.display = "none";
-            winner.style.display = "block";
-        }
-    }
-
-    quit.addEventListener("click", () => {
-        window.location.reload();
-    })
-
-}
-renderfunction3x3()
-
-
-
-// Reset Game
-// quit.addEventListener("click", () => {
-//     window.location.reload();
-// })

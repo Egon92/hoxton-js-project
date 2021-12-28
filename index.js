@@ -375,11 +375,14 @@ function renderTiTac4x4() {
 function render() {
     document.body.innerHTML = ''
     renderTiTac3x3()
+
+    const switchButton = document.querySelector('#switchButton')
+    if (switchButton.clicked === true) {
+        document.body.innerHTML = ''
+        renderfunction4x4()
+    }
 }
 render()
-
-
-
 
 //X => <i class="fas fa-times"></i>
 //O => <i class="fas fa-circle-notch"></i>
@@ -397,6 +400,7 @@ let boxes = document.querySelectorAll(".boxes");
 let winner = document.querySelector("#winner");
 let winnerName = document.querySelector("#winnerName");
 let quit = document.querySelector("#quit");
+
 
 
 // Select Which You Want To Be>
@@ -588,11 +592,8 @@ function renderfunction4x4() {
 }
 renderfunction3x3()
 
-const switchButton = document.querySelector('#switchButton')
-if (switchButton.clicked == true) {
-    document.body.innerHTML = ''
-    renderfunction4x4()
-}
+
+
 
 // Reset Game
 quit.addEventListener("click", () => {

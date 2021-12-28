@@ -171,7 +171,7 @@ function renderTiTac3x3() {
         document.body.innerHTML = ''
         state.winningCombinations = winningCombinations4x4
         renderTiTac4x4()
-
+        renderfunction4x4()
     })
 
     switchDiv.append(switchButton)
@@ -338,7 +338,7 @@ function renderTiTac4x4() {
         document.body.innerHTML = ''
         state.winningCombinations = winningCombinations3x3
         renderTiTac3x3()
-
+        renderfunction3x3()
     })
 
     switchDiv.append(switchButton)
@@ -371,20 +371,11 @@ function renderTiTac4x4() {
     containerEl.append(startingPage, mainPage, divWiner)
 
     document.body.append(containerEl)
-
-    renderfunction4x4()
-
 }
 
 function render() {
     document.body.innerHTML = ''
     renderTiTac3x3()
-
-    // const switchButton = document.querySelector('#switchButton')
-    // if (switchButton.clicked === true) {
-    //     document.body.innerHTML = ''
-    //     renderfunction4x4()
-    // }
 }
 render()
 
@@ -392,18 +383,18 @@ render()
 //O => <i class="fas fa-circle-notch"></i>
 
 // Selecting All "Starting Page" Tags
-let startingPage = document.querySelector("#startingPage");
-let choose = document.querySelectorAll(".choose");
+// let startingPage = document.querySelector("#startingPage");
+// let choose = document.querySelectorAll(".choose");
 
-// Selecting All "Main Page" Tags
-let mainPage = document.querySelector("#mainPage");
-let showChange = document.querySelector("#showChange");
-let boxes = document.querySelectorAll(".boxes");
+// // Selecting All "Main Page" Tags
+// let mainPage = document.querySelector("#mainPage");
+// let showChange = document.querySelector("#showChange");
+// let boxes = document.querySelectorAll(".boxes");
 
-// Selecting All "Winner Page" Tags
-let winner = document.querySelector("#winner");
-let winnerName = document.querySelector("#winnerName");
-let quit = document.querySelector("#quit");
+// // Selecting All "Winner Page" Tags
+// let winner = document.querySelector("#winner");
+// let winnerName = document.querySelector("#winnerName");
+// let quit = document.querySelector("#quit");
 
 
 
@@ -411,6 +402,21 @@ let quit = document.querySelector("#quit");
 // X or O
 
 function renderfunction3x3() {
+
+    // Selecting All "Starting Page" Tags
+    let startingPage = document.querySelector("#startingPage");
+    let choose = document.querySelectorAll(".choose");
+
+    // Selecting All "Main Page" Tags
+    let mainPage = document.querySelector("#mainPage");
+    let showChange = document.querySelector("#showChange");
+    let boxes = document.querySelectorAll(".boxes");
+
+    // Selecting All "Winner Page" Tags
+    let winner = document.querySelector("#winner");
+    let winnerName = document.querySelector("#winnerName");
+    let quit = document.querySelector("#quit");
+
 
     choose.forEach(chooseNow => {
         chooseNow.addEventListener("click", () => {
@@ -501,6 +507,9 @@ function renderfunction3x3() {
             winner.style.display = "block";
         }
     }
+    quit.addEventListener("click", () => {
+        window.location.reload();
+    })
 }
 
 function renderfunction4x4() {
@@ -609,12 +618,17 @@ function renderfunction4x4() {
             winner.style.display = "block";
         }
     }
+
+    quit.addEventListener("click", () => {
+        window.location.reload();
+    })
+
 }
 renderfunction3x3()
 
 
 
 // Reset Game
-quit.addEventListener("click", () => {
-    window.location.reload();
-})
+// quit.addEventListener("click", () => {
+//     window.location.reload();
+// })

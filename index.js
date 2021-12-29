@@ -275,8 +275,20 @@ let winningFunc = () => {
             winnerName.innerText = `Player O Win The Game!`;
 
             // show "Winner Page" & Hide "Mai Page"
-            mainPage.style.display = "none";
-            winner.style.display = "block";
+
+            setTimeout(function(){
+                mainPage.style.display = "none";
+              },3000);
+         
+
+            setTimeout(function(){
+                winner.style.display = "block";
+              },3000);
+
+              
+
+
+            // winner.style.display = "block";
         } else {
             continue;
         }

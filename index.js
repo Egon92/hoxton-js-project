@@ -266,8 +266,14 @@ let winningFunc = () => {
             winnerName.innerText = `Player X Win The Game!`;
 
             // show "Winner Page" & Hide "Mai Page"
-            mainPage.style.display = "none";
-            winner.style.display = "block";
+            setTimeout(function(){
+                mainPage.style.display = "none";
+              },3000);
+
+            setTimeout(function(){
+                winner.style.display = "block";
+              },3000);
+              
         } else if (boxes[b[0]].id == "O" && boxes[b[1]].id == "O" && boxes[b[2]].id == "O") {
             // console.log("O is The Winner");
 
